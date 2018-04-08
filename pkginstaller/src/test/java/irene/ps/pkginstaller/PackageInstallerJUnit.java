@@ -41,6 +41,12 @@ public class PackageInstallerJUnit {
 	 * are all valid inputs.)
 	 * ----------------------------------------------------------------------------------------
 	 */
+	
+	@Test
+	public void testNullArrayInput() {
+		assertEquals(PackageInstaller.installPackages(null), "null");
+	}
+	
 	@Test
 	public void testSimpleArrayInput() {
 		list = new String[] {"KittenService: CamelCaser", "CamelCaser: FraudStream", "CyberPortal: Ice"};
@@ -96,7 +102,7 @@ public class PackageInstallerJUnit {
 		list = new String[] {"KittenService: CamelCaser", "CamelCaser: Leetmeme", "Leetmeme: Fraudstream", "Ice: KittenService"};
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertTrue(PackageInstaller.verifyPackageInstallOrder(s));
-		assertFalse(PackageInstaller.checkInputCyclicDependencies());
+		assertFalse(PackageInstaller.checkInputForCyclicDependencies());
 		
 	}
 	
@@ -105,7 +111,7 @@ public class PackageInstallerJUnit {
 		list = new String[] {"KittenService: CamelCaser", "CamelCaser: Leetmeme", "Leetmeme: KittenService"};
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertFalse(PackageInstaller.verifyPackageInstallOrder(s));
-		assertTrue(PackageInstaller.checkInputCyclicDependencies());
+		assertTrue(PackageInstaller.checkInputForCyclicDependencies());
 
 	}
 	@Test
@@ -113,7 +119,7 @@ public class PackageInstallerJUnit {
 		list = new String[] {"KittenService: CamelCaser", "CamelCaser: Leetmeme", "Leetmeme: KittenService", "Ice: "};
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertTrue(PackageInstaller.verifyPackageInstallOrder(s)); //Should pass installation order test despite output missing packages
-		assertTrue(PackageInstaller.checkInputCyclicDependencies());
+		assertTrue(PackageInstaller.checkInputForCyclicDependencies());
 	}
 
 	@Test
@@ -121,7 +127,7 @@ public class PackageInstallerJUnit {
 		list = new String[] {"KittenService: CamelCaser", "CamelCaser: Leetmeme", "Leetmeme: KittenService", "Ice: ", "Fraudstream: ", "Cyberportal: "};
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertTrue(PackageInstaller.verifyPackageInstallOrder(s)); //Should pass installation order test despite output missing packages
-		assertTrue(PackageInstaller.checkInputCyclicDependencies()); //
+		assertTrue(PackageInstaller.checkInputForCyclicDependencies()); //
 		
 	}
 
