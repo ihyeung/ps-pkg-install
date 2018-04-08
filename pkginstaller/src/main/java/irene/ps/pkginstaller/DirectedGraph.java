@@ -14,8 +14,10 @@ import java.util.Queue;
 public class DirectedGraph {
 	private ArrayList<Package> vertices;
 	ArrayList<Package> pkginstallorder;
+	private boolean isCyclic;
 	
 	DirectedGraph(String [] pkglist){
+		isCyclic = false;
 		vertices = new ArrayList<Package>();
 		pkginstallorder = new ArrayList<Package>();
 		for (String p : pkglist) {
@@ -60,22 +62,50 @@ public class DirectedGraph {
 			currpkg.visited = true;
 			pkginstallorder.add(currpkg);
 			for (Package next: currpkg.outgoingnodes) { //Need to handle case where one of neighbors is a dependency for multiple other packages.
-				if (next != null && !next.visited) {
+				if (next != null && next.visited) { //Found cycle, terminate sort function early
+					isCyclic = true; 
+					return;
+				}
+				else if (next != null && !next.visited) {
 					next.prevNode = null; //Remove edges between current and all packages requiring current as a dependency
 					next.visited = true;
 					queue.add(next); 
 				}
-				else if (next != null && next.visited) {
-					//Cycle(?)
-				}
 			}		
 		}
-		if (pkginstallorder.size() < vertices.size()) { 
+		if (pkginstallorder.size() < vertices.size()) { //If less than the total number of nodes were traversed, graph is cyclic
+			isCyclic = true;
 			//If graph contains a cycle, queue will eventually become empty (while loop will terminate)
 			//but nodes visited will be less than the total number of nodes. i.e., package installer 
 			//will eventually stall.
-			pkginstallorder.clear();
 		}
+	}
+	
+	public ArrayList<Package> getVertices() {
+		return vertices;
+	}
+	
+	public Package lookupPackage(String name) {
+		for (Package p : vertices) {
+			if (p.name.equals(name)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	public String getPackageInstallStringOutput() {
+		String s = "";
+		if (pkginstallorder.size() == 0) {
+			return s;
+		}
+		else if (pkginstallorder.size() == 1) {
+			return pkginstallorder.get(0).name;
+		}
+		for (Package p: pkginstallorder) {
+			s += p.name + ", ";
+		}
+		return s.substring(0, s.length()-2);
 	}
 
 	ArrayList<Package> getPackageInstallOrder() {
@@ -83,8 +113,8 @@ public class DirectedGraph {
 		return this.pkginstallorder;
 	}
 	
-	private boolean containsCycle() {
-		return false;
+	public boolean containsCycle() {
+		return isCyclic;
 	}
 
 	
@@ -117,31 +147,6 @@ public class DirectedGraph {
 		}
 	}
 	
-	public ArrayList<Package> getVertices() {
-		return vertices;
-	}
-	
-	public Package lookupPackage(String name) {
-		for (Package p : vertices) {
-			if (p.name.equals(name)) {
-				return p;
-			}
-		}
-		return null;
-	}
-	
-	public String printPackages() {
-		String s = "";
-		if (pkginstallorder.size() == 0) {
-			return s;
-		}
-		else if (pkginstallorder.size() == 1) {
-			return pkginstallorder.get(0).name;
-		}
-		for (Package p: pkginstallorder) {
-			s += p.name + ", ";
-		}
-		return s.substring(0, s.length()-2);
-	}
+
 	
 }
