@@ -13,7 +13,7 @@ import java.util.Queue;
  */
 public class DirectedGraph {
 	private ArrayList<Package> vertices;
-	ArrayList<Package> pkginstallorder;
+	protected ArrayList<Package> pkginstallorder;
 	private boolean isCyclic;
 	
 	DirectedGraph(String [] pkglist){
@@ -42,13 +42,16 @@ public class DirectedGraph {
 			return;
 		}
 		Package second = addPackage(pair[1]);
-		first.updateDependency(second);
+		first.linkPackageDependency(second);
 		second.outgoingnodes.add(first);
 	}
+	
 	/**
-	 * Find a linear ordering of vertices such that
-	 * for all edges contained in the graph's edges set, 
-	 * any dependency of a given package precedes that package 
+	 * Uses a DFS to find a linear ordering of vertices (i.e., packages) such that
+	 * for all edges contained in the graph's edges set, any dependency of a given package 
+	 * precedes that package in the order of installation. 
+	 *  
+	 *  Loads list of package install order into pkginstallorder class member.
 	 */
 	private void topologicalSort() {
 		Queue<Package> queue = new LinkedList<Package>();
@@ -61,8 +64,8 @@ public class DirectedGraph {
 			Package currpkg = queue.remove();
 			currpkg.visited = true;
 			pkginstallorder.add(currpkg);
-			for (Package next: currpkg.outgoingnodes) { //Need to handle case where one of neighbors is a dependency for multiple other packages.
-				if (next != null && next.visited) { //Found cycle, terminate sort function early
+			for (Package next: currpkg.outgoingnodes) {
+				if (next != null && next.visited) { //Found cycle, terminate early
 					isCyclic = true; 
 					return;
 				}
@@ -76,22 +79,7 @@ public class DirectedGraph {
 		if (pkginstallorder.size() < vertices.size()) { //If less than the total number of nodes were traversed, graph is cyclic
 			isCyclic = true;
 			//If graph contains a cycle, queue will eventually become empty (while loop will terminate)
-			//but nodes visited will be less than the total number of nodes. i.e., package installer 
-			//will eventually stall.
 		}
-	}
-	
-	public ArrayList<Package> getVertices() {
-		return vertices;
-	}
-	
-	public Package lookupPackage(String name) {
-		for (Package p : vertices) {
-			if (p.name.equals(name)) {
-				return p;
-			}
-		}
-		return null;
 	}
 	
 	public String getPackageInstallStringOutput() {
@@ -107,6 +95,25 @@ public class DirectedGraph {
 		}
 		return s.substring(0, s.length()-2);
 	}
+	
+	public ArrayList<Package> getVertices() {
+		return vertices;
+	}
+	
+	/**
+	 * Checks if a package is already contained in the graph's list of vertices 
+	 * to prevent package duplicates.
+	 * @param name
+	 * @return
+	 */
+	public Package lookupPackage(String name) {
+		for (Package p : vertices) {
+			if (p.name.equals(name)) {
+				return p;
+			}
+		}
+		return null;
+	}
 
 	ArrayList<Package> getPackageInstallOrder() {
 		topologicalSort();
@@ -118,12 +125,12 @@ public class DirectedGraph {
 	}
 
 	
-	/* 
+	/** 
 	 * Inner node class representing each package entity to be installed.
 	 * Specifications: 
-	 * -Any given node has at most one dependency.
+	 * Any given node has at most one dependency.
 	 */
-	class Package {
+	protected class Package {
 		String name;
 		boolean visited;
 		Package prevNode; //Dependency
@@ -136,12 +143,11 @@ public class DirectedGraph {
 			prevNode = null;
 			dependency = null;
 			outgoingnodes = new ArrayList<Package>();
-			
 		}
 		String getDependencyName() {
 			return dependency != null ? dependency : new String("");
 		}
-		private void updateDependency(Package prev) {
+		private void linkPackageDependency(Package prev) {
 			prevNode = prev;
 			dependency = prev.name;
 		}
