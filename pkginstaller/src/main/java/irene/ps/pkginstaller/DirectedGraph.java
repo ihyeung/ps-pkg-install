@@ -15,7 +15,7 @@ public class DirectedGraph {
 	private ArrayList<Package> vertices;
 	protected ArrayList<Package> pkginstallorder;
 	private boolean isCyclic;
-	
+
 	DirectedGraph(String [] pkglist){
 		isCyclic = false;
 		vertices = new ArrayList<Package>();
@@ -24,7 +24,7 @@ public class DirectedGraph {
 			addPackageEntry(p);
 		}
 	}
-	
+
 	private Package addPackage(String pkgname) {
 		Package p = lookupPackage(pkgname);
 		if (p == null) {
@@ -33,7 +33,7 @@ public class DirectedGraph {
 		}
 		return p;
 	}
-	
+
 	private void addPackageEntry(String entry) {
 		String[] pair = entry.split(": ");
 		assert pair.length == 1 || pair.length == 2;
@@ -45,15 +45,15 @@ public class DirectedGraph {
 		first.linkPackageDependency(second);
 		second.outgoingnodes.add(first);
 	}
-	
+
 	/**
-	 * Uses a DFS to find a linear ordering of vertices (i.e., packages) such that
+	 * Uses a BFS to find a linear ordering of vertices (i.e., packages) such that
 	 * for all edges contained in the graph's edges set, any dependency of a given package 
 	 * precedes that package in the order of installation. 
 	 *  
-	 *  Loads list of package install order into pkginstallorder class member.
+	 *  Stores package install order list into pkginstallorder class member.
 	 */
-	private void topologicalSort() {
+	private void findInstallOrder() {
 		Queue<Package> queue = new LinkedList<Package>();
 		for (Package p : vertices) {
 			if (p.prevNode == null) { //Add packages without dependencies first
@@ -81,7 +81,7 @@ public class DirectedGraph {
 			//If graph contains a cycle, queue will eventually become empty (while loop will terminate)
 		}
 	}
-	
+
 	public String getPackageInstallStringOutput() {
 		String s = "";
 		if (pkginstallorder.size() == 0) {
@@ -95,11 +95,11 @@ public class DirectedGraph {
 		}
 		return s.substring(0, s.length()-2);
 	}
-	
+
 	public ArrayList<Package> getVertices() {
 		return vertices;
 	}
-	
+
 	/**
 	 * Checks if a package is already contained in the graph's list of vertices 
 	 * to prevent package duplicates.
@@ -116,15 +116,15 @@ public class DirectedGraph {
 	}
 
 	ArrayList<Package> getPackageInstallOrder() {
-		topologicalSort();
+		findInstallOrder();
 		return this.pkginstallorder;
 	}
-	
+
 	public boolean containsCycle() {
 		return isCyclic;
 	}
 
-	
+
 	/** 
 	 * Inner node class representing each package entity to be installed.
 	 * Specifications: 
@@ -136,7 +136,7 @@ public class DirectedGraph {
 		Package prevNode; //Dependency
 		String dependency; //Store dependency in string variable, prevNode may be modified to null during sort.
 		List<Package> outgoingnodes; 
-		
+
 		private Package(String pkg) {
 			name = pkg;
 			visited = false;
@@ -152,7 +152,7 @@ public class DirectedGraph {
 			dependency = prev.name;
 		}
 	}
-	
 
-	
+
+
 }
