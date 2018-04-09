@@ -21,7 +21,7 @@ public class PackageInstaller {
 		}
 		String output = createPackageInstallOrder(inputlist);
 		if (checkInputForCyclicDependencies() || !verifyPackageInstallOrder(output)) {
-			return new String ("Cycle");
+			return new String ("Invalid Input");
 		}
 		return output;
 	}

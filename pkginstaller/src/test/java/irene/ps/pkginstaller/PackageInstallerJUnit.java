@@ -124,7 +124,7 @@ public class PackageInstallerJUnit {
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertFalse(PackageInstaller.verifyPackageInstallOrder(s));
 		assertTrue(PackageInstaller.checkInputForCyclicDependencies());
-		assertEquals(PackageInstaller.installPackages(list), "Cycle");
+		assertEquals(PackageInstaller.installPackages(list), "Invalid Input");
 	}
 
 	@Test
@@ -133,7 +133,7 @@ public class PackageInstallerJUnit {
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertTrue(PackageInstaller.verifyPackageInstallOrder(s)); //Should pass installation order test despite output missing packages
 		assertTrue(PackageInstaller.checkInputForCyclicDependencies());
-		assertEquals(PackageInstaller.installPackages(list), "Cycle");
+		assertEquals(PackageInstaller.installPackages(list), "Invalid Input");
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class PackageInstallerJUnit {
 		String s = PackageInstaller.createPackageInstallOrder(list);
 		assertTrue(PackageInstaller.verifyPackageInstallOrder(s)); //Should pass installation order test despite output missing packages
 		assertTrue(PackageInstaller.checkInputForCyclicDependencies()); 
-		assertEquals(PackageInstaller.installPackages(list), "Cycle");
+		assertEquals(PackageInstaller.installPackages(list), "Invalid Input");
 	}
 
 	@Test

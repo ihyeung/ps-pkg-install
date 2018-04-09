@@ -13,8 +13,6 @@
 - Only strings containing letters without any numbers, spaces, or special characters are considered valid package/dependency names (e.g. `"package-name: >=2.0.1"` would be handled as invalid input.)
 
 #### Program Output Specifications:
-- Input with invalid format: `"Invalid Input"`
-- Input containing a cyclic dependency: `"Cycle"`
-- Any other program input with no valid ordering: `"No Valid Ordering"`
+- Input with invalid format or containing a cyclic dependency: `"Invalid Input"`
 - Inputs that are valid will return a comma-separated string of package names
   in order of installation order.
