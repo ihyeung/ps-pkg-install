@@ -7,11 +7,6 @@ import java.util.regex.Pattern;
 public class PackageInstaller {
 	private static DirectedGraph pkgs;
 
-	/**
-	 * PackageInstaller class driver function.
-	 * @param inputlist
-	 * @return
-	 */
 	public static String installPackages(String[] inputlist) {
 		if (inputlist == null) {
 			return new String("null");

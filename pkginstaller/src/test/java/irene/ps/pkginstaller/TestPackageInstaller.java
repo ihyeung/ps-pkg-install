@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PackageInstallerJUnit {
+public class TestPackageInstaller {
 	String[] list;
 	/**
 	 * @throws java.lang.Exception
