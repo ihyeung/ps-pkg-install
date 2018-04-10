@@ -16,3 +16,7 @@
 - Input with invalid format or containing a cyclic dependency: `"Invalid Input"`
 - Inputs that are valid will return a comma-separated string of package names
   in order of installation order.
+
+##### Build Instructions:
+1. Navigate to root dir with pom.xml file
+2. `'mvn clean test'`
